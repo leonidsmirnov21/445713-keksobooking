@@ -1,7 +1,7 @@
 # Личный проект «Кексобукинг» [![Build status][travis-image]][travis-url]
 
 * Студент: [Леонид Смирнов](https://up.htmlacademy.ru/javascript/14/user/445713).
-* Наставник: `Неизвестно`.
+* Наставник: [Никита Пиковец](https://htmlacademy.ru/profile/id503133).
 
 ---
 
