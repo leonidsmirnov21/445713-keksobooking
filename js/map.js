@@ -57,15 +57,17 @@ var createObjects = function (quantity) {
 
   // создаю пустой массив для цифр аватара
   var numbersAvatar = [];
+
+  // заполняю пустой массив для цифр аватара данными
+  for (var j = 0; j < quantity; j++) {
+    numbersAvatar[j] = j + 1;
+  }
   // перемешиваю массив цифр
   arrayShuffle(numbersAvatar);
   // перемешиваю массив title
   arrayShuffle(TITLE_NAMES);
 
   for (var i = 0; i < quantity; i++) {
-    // заполняю пустой массив для цифр аватара данными
-    numbersAvatar[i] = i + 1;
-
     // создаю пустой объект
     obj = {};
     obj.author = {};
@@ -105,9 +107,11 @@ var createObjects = function (quantity) {
 // создаёт пины
 var renderPins = function () {
   var pin = templatePin.cloneNode(true);
+  var pinWidth = templatePin.offsetWidth;
+  var pinHeight = templatePin.offsetHeight;
 
-  pin.style.left = points[i].location.x - 50 / 2 + 'px';
-  pin.style.top = points[i].location.y - 70 / 2 + 'px';
+  pin.style.left = points[i].location.x - pinWidth / 2 + 'px';
+  pin.style.top = points[i].location.y - pinHeight + 'px';
   pin.querySelector('img').src = points[i].author.avatar;
   pin.querySelector('img').alt = points[i].offer.title;
 
