@@ -239,7 +239,9 @@ var mapFiltersContainer = document.querySelector('.map__filters-container');
 // создаёт карточку при клике на пин
 var renderFinalCard = function (evt) {
   var currentImg = evt.currentTarget.querySelector('img');
-  var currentSrc = currentImg.src.split('keksobooking/')[1];
+  var srcFrom = currentImg.src.search('img/avatars/user');
+  var srcTo = currentImg.src.length;
+  var currentSrc = currentImg.src.substr(srcFrom, srcTo);
   var articleCard = map.querySelector('article');
 
   for (var i = 0; i < points.length; i++) {
