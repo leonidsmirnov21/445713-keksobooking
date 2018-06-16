@@ -52,23 +52,33 @@ var inputAdressLeft = +mapPinMainLeft.substr(0, mapPinMainLeft.length - 2) + map
 var inputAdressTop = +mapPinMainTop.substr(0, mapPinMainTop.length - 2) + mapPinMainHeight / 2;
 inputAdress.value = inputAdressLeft + ', ' + inputAdressTop;
 
+// показывает пины
+var showPins = function () {
+  for (var i = 0; i < mapPin.length; i++) {
+    mapPin[i].classList.remove('hidden');
+  }
+};
+
+// активирует поля формы
+var acivateForm = function () {
+  for (var j = 0; j < fieldsets.length; j++) {
+    fieldsets[j].removeAttribute('disabled', '');
+  }
+};
+
 // функция перевода страницы в активный режим
 var onMapPinMainMouseUp = function () {
   // удаляет плашку
   map.classList.remove('map--faded');
 
-  // показывает пины
-  for (var i = 0; i < mapPin.length; i++) {
-    mapPin[i].classList.remove('hidden');
-  }
+  // вызов функции показа пинов
+  showPins();
 
   // удаляет плашку с формы
   adForm.classList.remove('ad-form--disabled');
 
-  // активирует поля формы
-  for (var j = 0; j < fieldsets.length; j++) {
-    fieldsets[j].removeAttribute('disabled', '');
-  }
+  // вызов функции активации формы
+  acivateForm();
 
   // получает новые координаты и выводит в активную страницу
   mapPinMainLeft = mapPinMain.style.left;
@@ -264,12 +274,11 @@ for (var i = 0; i < mapPin.length; i++) {
 }
 
 // вешает обработчик на карту и отлавливает клик по крестику
-map.addEventListener('click', function (evt) {
+var onMapClick = function (evt) {
   var cardClose = map.querySelector('.popup__close');
   var articleCard = map.querySelector('article');
   if (evt.target === cardClose) {
     articleCard.remove();
   }
-});
-
-
+}
+map.addEventListener('click', onMapClick);
