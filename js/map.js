@@ -51,7 +51,7 @@ var getMainPinCoords = function () {
   var mapPinMainHeight = mapPinMain.offsetHeight;
   var inputAdressLeft = +mapPinMainLeft.substr(0, mapPinMainLeft.length - 2) + mapPinMainWidth / 2;
   var inputAdressTop = +mapPinMainTop.substr(0, mapPinMainTop.length - 2) + mapPinMainHeight;
-  inputAdress.value = inputAdressLeft + ', ' + inputAdressTop;
+  inputAdress.value = Math.floor(inputAdressLeft) + ', ' + Math.floor(inputAdressTop);
 };
 getMainPinCoords();
 
@@ -290,7 +290,7 @@ var inputTimeIn = adForm.querySelector('select#timein');
 var inputTimeOut = adForm.querySelector('select#timeout');
 
 // проверка полей комнат и гостей при изменении поля с гостями
-inputGuests.addEventListener('change', function () {
+var onInputGuestsChange = function () {
   if (inputRooms.value === '100' && inputGuests.value !== '0') {
     inputGuests.setCustomValidity('Кол-во гостей не может быть больше кол-ва комнат. Только "100 комнат" для "не для гостей"');
   } else if (inputRooms.value !== '100' && (inputRooms.value < inputGuests.value || inputGuests.value < 1)) {
@@ -298,10 +298,11 @@ inputGuests.addEventListener('change', function () {
   } else {
     inputGuests.setCustomValidity('');
   }
-});
+};
+inputGuests.addEventListener('change', onInputGuestsChange);
 
 // проверка полей комнат и гостей при изменении поля с комнатами
-inputRooms.addEventListener('change', function () {
+var onInputRoomsChange = function () {
   if (inputRooms.value === '100' && inputGuests.value !== '0') {
     inputGuests.setCustomValidity('Кол-во гостей не может быть больше кол-ва комнат. Только "100 комнат" для "не для гостей"');
   } else if (inputRooms.value !== '100' && (inputRooms.value < inputGuests.value || inputGuests.value < 1)) {
@@ -309,10 +310,11 @@ inputRooms.addEventListener('change', function () {
   } else {
     inputGuests.setCustomValidity('');
   }
-});
+};
+inputRooms.addEventListener('change', onInputRoomsChange);
 
 // установка минимальных цен в зависимости от типа дома
-inputType.addEventListener('change', function () {
+var onInputTypeChange = function () {
   var inpputPrice = adForm.querySelector('input#price');
 
   if (inputType.value === 'flat') {
@@ -325,13 +327,16 @@ inputType.addEventListener('change', function () {
     inpputPrice.min = 10000;
     inpputPrice.placeholder = 10000;
   }
-});
+};
+inputType.addEventListener('change', onInputTypeChange);
 
 // синхронизация времени заезда и выезда
-inputTimeIn.addEventListener('change', function () {
+var onInputTimeInChange = function () {
   inputTimeOut.value = inputTimeIn.value;
-});
+};
+inputTimeIn.addEventListener('change', onInputTimeInChange);
 
-inputTimeOut.addEventListener('change', function () {
+var onInputTimeOutChange = function () {
   inputTimeIn.value = inputTimeOut.value;
-});
+};
+inputTimeOut.addEventListener('change', onInputTimeOutChange);
