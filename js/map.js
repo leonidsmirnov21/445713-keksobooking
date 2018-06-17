@@ -273,3 +273,62 @@ map.addEventListener('click', function (evt) {
 });
 
 
+// ВАЛИДАЦИЯ ФОРМ
+var inputRooms = adForm.querySelector('select#room_number');
+var inputGuests = adForm.querySelector('select#capacity');
+var inputType = adForm.querySelector('select#type');
+var inputTimeIn = adForm.querySelector('select#timein');
+var inputTimeOut = adForm.querySelector('select#timeout');
+
+// проверка полей комнат и гостей при изменении поля с гостями
+inputGuests.addEventListener('change', function (evt) {
+  if (inputRooms.value == 100 && inputGuests.value != 0) {
+    inputGuests.setCustomValidity('Кол-во гостей не может быть больше кол-ва комнат. Только "100 комнат" для "не для гостей"');
+  }
+  else if (inputRooms.value != 100 && (inputRooms.value < inputGuests.value || inputGuests.value < 1)) {
+    inputGuests.setCustomValidity('Кол-во гостей не может быть больше кол-ва комнат. Только "100 комнат" для "не для гостей"');
+  }
+  else {
+    inputGuests.setCustomValidity('');
+  }
+});
+
+// проверка полей комнат и гостей при изменении поля с комнатами
+inputRooms.addEventListener('change', function (evt) {
+  if (inputRooms.value == 100 && inputGuests.value != 0) {
+    inputGuests.setCustomValidity('Кол-во гостей не может быть больше кол-ва комнат. Только "100 комнат" для "не для гостей"');
+  }
+  else if (inputRooms.value != 100 && (inputRooms.value < inputGuests.value || inputGuests.value < 1)) {
+    inputGuests.setCustomValidity('Кол-во гостей не может быть больше кол-ва комнат. Только "100 комнат" для "не для гостей"');
+  }
+  else {
+    inputGuests.setCustomValidity('');
+  }
+});
+
+// установка минимальных цен в зависимости от типа дома
+inputType.addEventListener('change', function (evt) {
+  var inpputPrice = adForm.querySelector('input#price');
+
+  if (inputType.value === 'flat') {
+    inpputPrice.min = 1000;
+    inpputPrice.placeholder = 1000;
+  }
+  else if (inputType.value === 'house') {
+    inpputPrice.min = 5000;
+    inpputPrice.placeholder = 5000;
+  }
+  else if (inputType.value === 'palace') {
+    inpputPrice.min = 10000;
+    inpputPrice.placeholder = 10000;
+  }
+});
+
+// синхронизация времени заезда и выезда
+inputTimeIn.addEventListener('change', function (evt) {
+  inputTimeOut.value = inputTimeIn.value;
+});
+
+inputTimeOut.addEventListener('change', function (evt) {
+  inputTimeIn.value = inputTimeOut.value;
+});
