@@ -280,5 +280,5 @@ var onMapClick = function (evt) {
   if (evt.target === cardClose) {
     articleCard.remove();
   }
-}
+};
 map.addEventListener('click', onMapClick);
