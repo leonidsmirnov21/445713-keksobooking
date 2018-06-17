@@ -44,13 +44,17 @@ var disableForm = function () {
 disableForm();
 
 // получает координаты и выводит в неактивную страницу
-var mapPinMainLeft = mapPinMain.style.left;
-var mapPinMainTop = mapPinMain.style.top;
-var mapPinMainWidth = mapPinMain.offsetWidth;
-var mapPinMainHeight = mapPinMain.offsetHeight;
-var inputAdressLeft = +mapPinMainLeft.substr(0, mapPinMainLeft.length - 2) + mapPinMainWidth / 2;
-var inputAdressTop = +mapPinMainTop.substr(0, mapPinMainTop.length - 2) + mapPinMainHeight / 2;
-inputAdress.value = inputAdressLeft + ', ' + inputAdressTop;
+var getMainPinCoords = function () {
+  var mapPinMainLeft = mapPinMain.style.left;
+  var mapPinMainTop = mapPinMain.style.top;
+  var mapPinMainWidth = mapPinMain.offsetWidth;
+  var mapPinMainHeight = mapPinMain.offsetHeight;
+  var inputAdressLeft = +mapPinMainLeft.substr(0, mapPinMainLeft.length - 2) + mapPinMainWidth / 2;
+  var inputAdressTop = +mapPinMainTop.substr(0, mapPinMainTop.length - 2) + mapPinMainHeight;
+  inputAdress.value = inputAdressLeft + ', ' + inputAdressTop;
+};
+getMainPinCoords();
+
 
 // показывает пины
 var showPins = function () {
@@ -81,11 +85,7 @@ var onMapPinMainMouseUp = function () {
   acivateForm();
 
   // получает новые координаты и выводит в активную страницу
-  mapPinMainLeft = mapPinMain.style.left;
-  mapPinMainTop = mapPinMain.style.top;
-  inputAdressLeft = +mapPinMainLeft.substr(0, mapPinMainLeft.length - 2) + mapPinMainWidth / 2;
-  inputAdressTop = +mapPinMainTop.substr(0, mapPinMainTop.length - 2) + mapPinMainHeight;
-  inputAdress.value = inputAdressLeft + ', ' + inputAdressTop;
+  getMainPinCoords();
 };
 // обработчик события на главном пине - активация страницы
 mapPinMain.addEventListener('mouseup', onMapPinMainMouseUp);
