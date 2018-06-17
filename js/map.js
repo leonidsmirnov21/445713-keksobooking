@@ -55,7 +55,6 @@ var getMainPinCoords = function () {
 };
 getMainPinCoords();
 
-
 // показывает пины
 var showPins = function () {
   for (var i = 0; i < mapPin.length; i++) {
