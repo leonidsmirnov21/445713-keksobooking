@@ -44,38 +44,48 @@ var disableForm = function () {
 disableForm();
 
 // получает координаты и выводит в неактивную страницу
-var mapPinMainLeft = mapPinMain.style.left;
-var mapPinMainTop = mapPinMain.style.top;
-var mapPinMainWidth = mapPinMain.offsetWidth;
-var mapPinMainHeight = mapPinMain.offsetHeight;
-var inputAdressLeft = +mapPinMainLeft.substr(0, mapPinMainLeft.length - 2) + mapPinMainWidth / 2;
-var inputAdressTop = +mapPinMainTop.substr(0, mapPinMainTop.length - 2) + mapPinMainHeight / 2;
-inputAdress.value = inputAdressLeft + ', ' + inputAdressTop;
+var getMainPinCoords = function () {
+  var mapPinMainLeft = mapPinMain.style.left;
+  var mapPinMainTop = mapPinMain.style.top;
+  var mapPinMainWidth = mapPinMain.offsetWidth;
+  var mapPinMainHeight = mapPinMain.offsetHeight;
+  var inputAdressLeft = +mapPinMainLeft.substr(0, mapPinMainLeft.length - 2) + mapPinMainWidth / 2;
+  var inputAdressTop = +mapPinMainTop.substr(0, mapPinMainTop.length - 2) + mapPinMainHeight;
+  inputAdress.value = inputAdressLeft + ', ' + inputAdressTop;
+};
+getMainPinCoords();
+
+
+// показывает пины
+var showPins = function () {
+  for (var i = 0; i < mapPin.length; i++) {
+    mapPin[i].classList.remove('hidden');
+  }
+};
+
+// активирует поля формы
+var acivateForm = function () {
+  for (var j = 0; j < fieldsets.length; j++) {
+    fieldsets[j].removeAttribute('disabled', '');
+  }
+};
 
 // функция перевода страницы в активный режим
 var onMapPinMainMouseUp = function () {
   // удаляет плашку
   map.classList.remove('map--faded');
 
-  // показывает пины
-  for (var i = 0; i < mapPin.length; i++) {
-    mapPin[i].classList.remove('hidden');
-  }
+  // вызов функции показа пинов
+  showPins();
 
   // удаляет плашку с формы
   adForm.classList.remove('ad-form--disabled');
 
-  // активирует поля формы
-  for (var j = 0; j < fieldsets.length; j++) {
-    fieldsets[j].removeAttribute('disabled', '');
-  }
+  // вызов функции активации формы
+  acivateForm();
 
   // получает новые координаты и выводит в активную страницу
-  mapPinMainLeft = mapPinMain.style.left;
-  mapPinMainTop = mapPinMain.style.top;
-  inputAdressLeft = +mapPinMainLeft.substr(0, mapPinMainLeft.length - 2) + mapPinMainWidth / 2;
-  inputAdressTop = +mapPinMainTop.substr(0, mapPinMainTop.length - 2) + mapPinMainHeight;
-  inputAdress.value = inputAdressLeft + ', ' + inputAdressTop;
+  getMainPinCoords();
 };
 // обработчик события на главном пине - активация страницы
 mapPinMain.addEventListener('mouseup', onMapPinMainMouseUp);
@@ -264,14 +274,14 @@ for (var i = 0; i < mapPin.length; i++) {
 }
 
 // вешает обработчик на карту и отлавливает клик по крестику
-map.addEventListener('click', function (evt) {
+var onMapClick = function (evt) {
   var cardClose = map.querySelector('.popup__close');
   var articleCard = map.querySelector('article');
   if (evt.target === cardClose) {
     articleCard.remove();
   }
-});
-
+};
+map.addEventListener('click', onMapClick);
 
 // ВАЛИДАЦИЯ ФОРМ
 var inputRooms = adForm.querySelector('select#room_number');
