@@ -89,6 +89,55 @@ var onMapPinMainMouseUp = function () {
 // обработчик события на главном пине - активация страницы
 mapPinMain.addEventListener('mouseup', onMapPinMainMouseUp);
 
+// ПЕРЕТАСКИВАНИЕ МАРКЕРА
+var onMapPinMainMouseDown = function (evt) {
+  var startCoords = {
+    x: evt.clientX,
+    y: evt.clientY
+  };
+
+  var onMapPinMainMove = function (moveEvt) {
+    var shift = {
+      x: startCoords.x - moveEvt.clientX,
+      y: startCoords.y - moveEvt.clientY
+    };
+
+    startCoords = {
+      x: moveEvt.x,
+      y: moveEvt.y
+    };
+
+    var mapWidth = map.offsetWidth;
+    var minTop = 130;
+    var maxTop = 630;
+
+    mapPinMain.style.top = (mapPinMain.offsetTop - shift.y) + 'px';
+    mapPinMain.style.left = (mapPinMain.offsetLeft - shift.x) + 'px';
+
+    if ((mapPinMain.offsetLeft - shift.x) > (mapWidth - mapPinMain.offsetWidth)) {
+      mapPinMain.style.left = mapWidth - mapPinMain.offsetWidth + 'px';
+    }
+    if ((mapPinMain.offsetLeft - shift.x) < (mapWidth - mapWidth)) {
+      mapPinMain.style.left = (mapWidth - mapWidth) + 'px';
+    }
+    if ((mapPinMain.offsetTop - shift.y) < (minTop - mapPinMain.offsetHeight)) {
+      mapPinMain.style.top = (minTop - mapPinMain.offsetHeight) + 'px';
+    }
+    if ((mapPinMain.offsetTop - shift.y) > maxTop) {
+      mapPinMain.style.top = maxTop + 'px';
+    }
+  };
+
+  var onMouseUp = function () {
+    document.removeEventListener('mousemove', onMapPinMainMove);
+    document.removeEventListener('mouseup', onMouseUp);
+  };
+
+  document.addEventListener('mousemove', onMapPinMainMove);
+  document.addEventListener('mouseup', onMouseUp);
+};
+mapPinMain.addEventListener('mousedown', onMapPinMainMouseDown);
+
 // генерация случайного числа
 var generateRandIndex = function (min, max) {
   var rand = min - 0.5 + Math.random() * (max - min + 1);
