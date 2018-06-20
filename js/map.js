@@ -82,9 +82,6 @@ var onMapPinMainMouseUp = function () {
 
   // вызов функции активации формы
   acivateForm();
-
-  // получает новые координаты и выводит в активную страницу
-  getMainPinCoords();
 };
 // обработчик события на главном пине - активация страницы
 mapPinMain.addEventListener('mouseup', onMapPinMainMouseUp);
@@ -131,6 +128,7 @@ var onMapPinMainMouseDown = function (evt) {
   var onMouseUp = function () {
     document.removeEventListener('mousemove', onMapPinMainMove);
     document.removeEventListener('mouseup', onMouseUp);
+    getMainPinCoords();
   };
 
   document.addEventListener('mousemove', onMapPinMainMove);
