@@ -129,6 +129,18 @@ var onMapPinMainMouseDown = function (evt) {
     document.removeEventListener('mousemove', onMapPinMainMove);
     document.removeEventListener('mouseup', onMouseUp);
     getMainPinCoords();
+
+    // удаляет плашку
+    map.classList.remove('map--faded');
+
+    // вызов функции показа пинов
+    showPins();
+
+    // удаляет плашку с формы
+    adForm.classList.remove('ad-form--disabled');
+
+    // вызов функции активации формы
+    acivateForm();
   };
 
   document.addEventListener('mousemove', onMapPinMainMove);
