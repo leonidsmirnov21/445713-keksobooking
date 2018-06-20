@@ -69,25 +69,68 @@ var acivateForm = function () {
   }
 };
 
-// функция перевода страницы в активный режим
-var onMapPinMainMouseUp = function () {
-  // удаляет плашку
-  map.classList.remove('map--faded');
 
-  // вызов функции показа пинов
-  showPins();
+// ПЕРЕТАСКИВАНИЕ МАРКЕРА и АКТИВАЦИЯ СТРАНИЦЫ
+var onMapPinMainMouseDown = function (evt) {
+  var startCoords = {
+    x: evt.clientX,
+    y: evt.clientY
+  };
 
-  // удаляет плашку с формы
-  adForm.classList.remove('ad-form--disabled');
+  var onMapPinMainMove = function (moveEvt) {
+    var shift = {
+      x: startCoords.x - moveEvt.clientX,
+      y: startCoords.y - moveEvt.clientY
+    };
 
-  // вызов функции активации формы
-  acivateForm();
+    startCoords = {
+      x: moveEvt.x,
+      y: moveEvt.y
+    };
 
-  // получает новые координаты и выводит в активную страницу
-  getMainPinCoords();
+    var mapWidth = map.offsetWidth;
+    var minTop = 130;
+    var maxTop = 630;
+
+    mapPinMain.style.top = (mapPinMain.offsetTop - shift.y) + 'px';
+    mapPinMain.style.left = (mapPinMain.offsetLeft - shift.x) + 'px';
+
+    if ((mapPinMain.offsetLeft - shift.x) > (mapWidth - mapPinMain.offsetWidth)) {
+      mapPinMain.style.left = mapWidth - mapPinMain.offsetWidth + 'px';
+    }
+    if ((mapPinMain.offsetLeft - shift.x) < (mapWidth - mapWidth)) {
+      mapPinMain.style.left = (mapWidth - mapWidth) + 'px';
+    }
+    if ((mapPinMain.offsetTop - shift.y) < (minTop - mapPinMain.offsetHeight)) {
+      mapPinMain.style.top = (minTop - mapPinMain.offsetHeight) + 'px';
+    }
+    if ((mapPinMain.offsetTop - shift.y) > maxTop) {
+      mapPinMain.style.top = maxTop + 'px';
+    }
+  };
+
+  var onMouseUp = function () {
+    document.removeEventListener('mousemove', onMapPinMainMove);
+    document.removeEventListener('mouseup', onMouseUp);
+    getMainPinCoords();
+
+    // удаляет плашку
+    map.classList.remove('map--faded');
+
+    // вызов функции показа пинов
+    showPins();
+
+    // удаляет плашку с формы
+    adForm.classList.remove('ad-form--disabled');
+
+    // вызов функции активации формы
+    acivateForm();
+  };
+
+  document.addEventListener('mousemove', onMapPinMainMove);
+  document.addEventListener('mouseup', onMouseUp);
 };
-// обработчик события на главном пине - активация страницы
-mapPinMain.addEventListener('mouseup', onMapPinMainMouseUp);
+mapPinMain.addEventListener('mousedown', onMapPinMainMouseDown);
 
 // генерация случайного числа
 var generateRandIndex = function (min, max) {
