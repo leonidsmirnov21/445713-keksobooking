@@ -69,24 +69,8 @@ var acivateForm = function () {
   }
 };
 
-// функция перевода страницы в активный режим
-var onMapPinMainMouseUp = function () {
-  // удаляет плашку
-  map.classList.remove('map--faded');
 
-  // вызов функции показа пинов
-  showPins();
-
-  // удаляет плашку с формы
-  adForm.classList.remove('ad-form--disabled');
-
-  // вызов функции активации формы
-  acivateForm();
-};
-// обработчик события на главном пине - активация страницы
-mapPinMain.addEventListener('mouseup', onMapPinMainMouseUp);
-
-// ПЕРЕТАСКИВАНИЕ МАРКЕРА
+// ПЕРЕТАСКИВАНИЕ МАРКЕРА и АКТИВАЦИЯ СТРАНИЦЫ
 var onMapPinMainMouseDown = function (evt) {
   var startCoords = {
     x: evt.clientX,
