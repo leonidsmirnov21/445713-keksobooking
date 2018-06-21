@@ -3,7 +3,6 @@
 (function () {
   var mapPinMain = window.util.map.querySelector('.map__pin--main');
   var adForm = document.querySelector('.ad-form');
-  var fieldsets = adForm.querySelectorAll('fieldset');
   var inputAdress = document.querySelector('#address');
 
   window.getMainPinCoords = function () {
@@ -100,7 +99,7 @@
     var onMouseUp = function () {
       document.removeEventListener('mousemove', onMapPinMainMove);
       document.removeEventListener('mouseup', onMouseUp);
-      getMainPinCoords();
+      window.getMainPinCoords();
 
       // удаляет плашку если она есть
       if (window.util.map.classList.contains('map--faded')) {

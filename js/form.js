@@ -3,14 +3,11 @@
 (function () {
   var adForm = document.querySelector('.ad-form');
   var fieldsets = adForm.querySelectorAll('fieldset');
-  var mapPinMain = window.util.map.querySelector('.map__pin--main');
-  var mapPin = window.util.map.querySelectorAll('button[type=button]');
   var inputRooms = adForm.querySelector('select#room_number');
   var inputGuests = adForm.querySelector('select#capacity');
   var inputType = adForm.querySelector('select#type');
   var inputTimeIn = adForm.querySelector('select#timein');
   var inputTimeOut = adForm.querySelector('select#timeout');
-  var inputAdress = document.querySelector('#address');
 
   var disableForm = function () {
     for (var i = 0; i < fieldsets.length; i++) {
