@@ -32,9 +32,9 @@
       numbersAvatar[j] = j + 1;
     }
     // перемешиваю массив цифр
-    window.util.arrayShuffle(numbersAvatar);
+    window.utils.arrayShuffle(numbersAvatar);
     // перемешиваю массив title
-    window.util.arrayShuffle(TITLE_NAMES);
+    window.utils.arrayShuffle(TITLE_NAMES);
 
     for (var i = 0; i < quantity; i++) {
       // создаю пустой объект
@@ -50,24 +50,24 @@
       }
 
       obj.offer.title = TITLE_NAMES[i];
-      obj.location.x = window.util.generateRandIndex(300, 900);
-      obj.location.y = window.util.generateRandIndex(130, 630);
+      obj.location.x = window.utils.generateRandIndex(300, 900);
+      obj.location.y = window.utils.generateRandIndex(130, 630);
       obj.offer.address = obj.location.x + ', ' + obj.location.y;
-      obj.offer.price = window.util.generateRandIndex(1000, 1000000);
-      obj.offer.type = OBJECT_TYPE[window.util.generateRandIndex(0, OBJECT_TYPE.length - 1)];
-      obj.offer.rooms = window.util.generateRandIndex(1, 5);
-      obj.offer.guests = window.util.generateRandIndex(1, 8);
-      obj.offer.checkin = CHECKIN_TIMES[window.util.generateRandIndex(0, CHECKIN_TIMES.length - 1)];
+      obj.offer.price = window.utils.generateRandIndex(1000, 1000000);
+      obj.offer.type = OBJECT_TYPE[window.utils.generateRandIndex(0, OBJECT_TYPE.length - 1)];
+      obj.offer.rooms = window.utils.generateRandIndex(1, 5);
+      obj.offer.guests = window.utils.generateRandIndex(1, 8);
+      obj.offer.checkin = CHECKIN_TIMES[window.utils.generateRandIndex(0, CHECKIN_TIMES.length - 1)];
       obj.offer.checkout = obj.offer.checkin;
 
       var NEW_FEATURES_SERVICES = FEATURES_SERVICES.slice();
-      window.util.arrayShuffle(NEW_FEATURES_SERVICES);
-      NEW_FEATURES_SERVICES.length = window.util.generateRandIndex(0, NEW_FEATURES_SERVICES.length);
+      window.utils.arrayShuffle(NEW_FEATURES_SERVICES);
+      NEW_FEATURES_SERVICES.length = window.utils.generateRandIndex(0, NEW_FEATURES_SERVICES.length);
       obj.offer.features = NEW_FEATURES_SERVICES;
 
       obj.offer.description = '';
       var NEW_PHOHTOS_ARR = PHOTOS_ARR.slice();
-      obj.offer.photos = window.util.arrayShuffle(NEW_PHOHTOS_ARR);
+      obj.offer.photos = window.utils.arrayShuffle(NEW_PHOHTOS_ARR);
       objects.push(obj);
     }
     return objects;

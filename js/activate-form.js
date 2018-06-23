@@ -16,13 +16,7 @@
   };
   disableForm();
 
-  window.acivateForm = function () {
-    for (var j = 0; j < fieldsets.length; j++) {
-      fieldsets[j].removeAttribute('disabled', '');
-    }
-  };
-
-  window.getMainPinCoords();
+  window.utils.getMainPinCoords();
 
   // проверка полей комнат и гостей при изменении поля с гостями
   var onInputGuestsChange = function () {
@@ -75,4 +69,10 @@
     inputTimeIn.value = inputTimeOut.value;
   };
   inputTimeOut.addEventListener('change', onInputTimeOutChange);
+
+  window.acivateForm = function () {
+    for (var j = 0; j < fieldsets.length; j++) {
+      fieldsets[j].removeAttribute('disabled', '');
+    }
+  };
 })();

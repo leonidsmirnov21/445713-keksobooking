@@ -1,19 +1,8 @@
 'use strict';
 
 (function () {
-  var mapPinMain = window.util.map.querySelector('.map__pin--main');
+  var mapPinMain = window.utils.map.querySelector('.map__pin--main');
   var adForm = document.querySelector('.ad-form');
-  var inputAdress = document.querySelector('#address');
-
-  window.getMainPinCoords = function () {
-    var mapPinMainLeft = mapPinMain.style.left;
-    var mapPinMainTop = mapPinMain.style.top;
-    var mapPinMainWidth = mapPinMain.offsetWidth;
-    var mapPinMainHeight = mapPinMain.offsetHeight;
-    var inputAdressLeft = +mapPinMainLeft.substr(0, mapPinMainLeft.length - 2) + mapPinMainWidth / 2;
-    var inputAdressTop = +mapPinMainTop.substr(0, mapPinMainTop.length - 2) + mapPinMainHeight;
-    inputAdress.value = Math.floor(inputAdressLeft) + ', ' + Math.floor(inputAdressTop);
-  };
 
   // находит элементы для пинов
   var pins = document.querySelector('.map__pins');
@@ -43,7 +32,7 @@
   };
   paintPins();
 
-  var mapPin = window.util.map.querySelectorAll('button[type=button]');
+  var mapPin = window.utils.map.querySelectorAll('button[type=button]');
   var hidePins = function () {
     for (var i = 0; i < mapPin.length; i++) {
       mapPin[i].classList.add('hidden');
@@ -75,7 +64,7 @@
         y: moveEvt.y
       };
 
-      var mapWidth = window.util.map.offsetWidth;
+      var mapWidth = window.utils.map.offsetWidth;
       var minTop = 130;
       var maxTop = 630;
 
@@ -99,11 +88,11 @@
     var onMouseUp = function () {
       document.removeEventListener('mousemove', onMapPinMainMove);
       document.removeEventListener('mouseup', onMouseUp);
-      window.getMainPinCoords();
+      window.utils.getMainPinCoords();
 
       // удаляет плашку если она есть
-      if (window.util.map.classList.contains('map--faded')) {
-        window.util.map.classList.remove('map--faded');
+      if (window.utils.map.classList.contains('map--faded')) {
+        window.utils.map.classList.remove('map--faded');
       }
       // удаляет плашку с формы
       if (adForm.classList.contains('ad-form--disabled')) {
