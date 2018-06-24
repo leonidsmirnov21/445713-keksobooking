@@ -70,9 +70,11 @@
   };
   inputTimeOut.addEventListener('change', onInputTimeOutChange);
 
-  window.acivateForm = function () {
+  var acivateForm = function () {
     for (var j = 0; j < fieldsets.length; j++) {
       fieldsets[j].removeAttribute('disabled', '');
     }
   };
+
+  window.acivateForm = acivateForm;
 })();
