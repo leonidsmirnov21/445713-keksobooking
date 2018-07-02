@@ -77,4 +77,26 @@
   };
 
   window.acivateForm = acivateForm;
+
+  var initForm = function () {
+    adForm.reset();
+    window.utils.getMainPinCoords();
+  };
+
+  var initFormError = function (errorMessage) {
+    var node = document.createElement('div');
+    node.classList.add('error-message');
+    node.textContent = errorMessage;
+    document.body.insertAdjacentElement('afterbegin', node);
+
+    var deleteDiv = function () {
+      document.querySelector('.error-message').remove();
+    };
+    setTimeout(deleteDiv, 3000);
+  };
+
+  adForm.addEventListener('submit', function (evt) {
+    window.backend.upload(new FormData(adForm), initForm, initFormError);
+    evt.preventDefault();
+  });
 })();
