@@ -44,11 +44,12 @@
   };
 
   var initPins = function (data) {
+    var pinsQuantity = 8;
     window.dataArray = data;
     renderPins(window.dataArray);
     window.mapPin = window.utils.map.querySelectorAll('button[type=button]');
 
-    for (var i = 0; i < window.mapPin.length; i++) {
+    for (var i = 0; i < pinsQuantity; i++) {
       window.mapPin[i].addEventListener('click', searchPin);
     }
   };

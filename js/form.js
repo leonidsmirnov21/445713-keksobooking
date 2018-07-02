@@ -81,24 +81,16 @@
   var initForm = function () {
     adForm.reset();
     window.utils.getMainPinCoords();
-    // var success = document.querySelector('.success');
-    // success.classList.remove('hidden');
   };
 
   var initFormError = function (errorMessage) {
     var node = document.createElement('div');
-    node.style = 'z-index: 100; margin: 0 auto; text-align: center; background-color: #ff6547;';
-    node.style.position = 'fixed';
-    node.style.left = 0;
-    node.style.right = 0;
-    node.style.fontSize = '30px';
-    node.style.color = '#ffffff';
-
+    node.classList.add('error-message');
     node.textContent = errorMessage;
     document.body.insertAdjacentElement('afterbegin', node);
 
     var deleteDiv = function () {
-      document.querySelector('div').remove();
+      document.querySelector('.error-message').remove();
     };
     setTimeout(deleteDiv, 3000);
   };
