@@ -1220,13 +1220,13 @@ fieldset {
 /* Плашка ошибки */
 
 .error-message {
-  position: 'fixed';
+  position: fixed;
   left: 0;
   right: 0;
 
   margin: 0 auto;
 
-  font-size: '30px';
+  font-size: 30px;
   text-align: center;
   color: #ffffff;
 

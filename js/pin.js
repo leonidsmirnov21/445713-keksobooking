@@ -36,7 +36,7 @@
   var searchPin = function (evt) {
     var currentTar = evt.currentTarget;
 
-    for (var i = 0; i < window.mapPin.length; i++) {
+    for (var i = 0; i < window.dataArray.length; i++) {
       if (currentTar === window.mapPin[i]) {
         window.checkCard(window.dataArray[i]);
       }
@@ -44,25 +44,18 @@
   };
 
   var initPins = function (data) {
-    var pinsQuantity = 8;
-    window.dataArray = data;
+    window.dataArray = data.slice(0, 8);
     renderPins(window.dataArray);
     window.mapPin = window.utils.map.querySelectorAll('button[type=button]');
 
-    for (var i = 0; i < pinsQuantity; i++) {
+    for (var i = 0; i < window.mapPin.length; i++) {
       window.mapPin[i].addEventListener('click', searchPin);
     }
   };
 
   var initPinsError = function (errorMessage) {
     var node = document.createElement('div');
-    node.style = 'z-index: 100; margin: 0 auto; text-align: center; background-color: #ff6547;';
-    node.style.position = 'absolute';
-    node.style.left = 0;
-    node.style.right = 0;
-    node.style.fontSize = '30px';
-    node.style.color = '#ffffff';
-
+    node.classList.add('error-message');
     node.textContent = errorMessage;
     document.body.insertAdjacentElement('afterbegin', node);
 
