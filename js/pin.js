@@ -36,16 +36,21 @@
   var searchPin = function (evt) {
     var currentTar = evt.currentTarget;
 
-    for (var i = 0; i < window.dataArray.length; i++) {
+    for (var i = 0; i < window.dataArrayForRender.length; i++) {
       if (currentTar === window.mapPin[i]) {
-        window.checkCard(window.dataArray[i]);
+        window.checkCard(window.dataArrayForRender[i]);
       }
     }
   };
 
   var initPins = function (data) {
-    window.dataArray = data.slice(0, 8);
-    renderPins(window.dataArray);
+    window.dataArray = data;
+    window.pinsQuantityMax = 5;
+    var dataArrayShuf = window.utils.arrayShuffle(data);
+    window.dataArrayForRender = dataArrayShuf.slice(0, window.pinsQuantityMax);
+
+    renderPins(window.dataArrayForRender);
+
     window.mapPin = window.utils.map.querySelectorAll('button[type=button]');
 
     for (var i = 0; i < window.mapPin.length; i++) {
@@ -64,6 +69,111 @@
     };
     setTimeout(deleteDiv, 3000);
   };
+
+  var selectHousingType = document.querySelector('select#housing-type');
+  var selectHousingPrice = document.querySelector('select#housing-price');
+  var selectHousingRooms = document.querySelector('select#housing-rooms');
+  var selectHousingGuests = document.querySelector('select#housing-guests');
+  var mapFilters = document.querySelector('.map__filters');
+  var inputWifi = mapFilters.querySelector('input#filter-wifi');
+  var inputDishwasher = mapFilters.querySelector('input#filter-dishwasher');
+  var inputParking = mapFilters.querySelector('input#filter-parking');
+  var inputWasher = mapFilters.querySelector('input#filter-washer');
+  var inputElevator = mapFilters.querySelector('input#filter-elevator');
+  var inputConditioner = mapFilters.querySelector('input#filter-conditioner');
+
+  var updatePins = function () {
+    var articleCard = window.utils.map.querySelector('article');
+    if (articleCard) {
+      articleCard.remove();
+    }
+
+    var mapPin = window.utils.map.querySelectorAll('button[type=button]');
+
+    for (var i = 0; i < mapPin.length; i++) {
+      window.mapPin[i].remove();
+    }
+
+    var samePins = window.dataArray.filter(function (it) {
+      var allChecksComplete = true;
+
+      if (!(selectHousingType.value === 'any' || it.offer.type === selectHousingType.value)) {
+        allChecksComplete = false;
+      }
+
+      if (!(selectHousingPrice.value === 'any'
+        || (selectHousingPrice.value === 'low' && it.offer.price < 10000)
+        || (selectHousingPrice.value === 'high' && it.offer.price > 50000)
+        || (selectHousingPrice.value === 'middle' && it.offer.price >= 10000 && it.offer.price <= 50000))) {
+        allChecksComplete = false;
+      }
+
+      if (!(selectHousingRooms.value === 'any' || it.offer.rooms.toString() === selectHousingRooms.value)) {
+        allChecksComplete = false;
+      }
+
+      if (!(selectHousingGuests.value === 'any' || it.offer.guests.toString() === selectHousingGuests.value)) {
+        allChecksComplete = false;
+      }
+
+      if (inputWifi.checked) {
+        if (it.offer.features.indexOf(inputWifi.value) === -1) {
+          allChecksComplete = false;
+        }
+      }
+
+      if (inputDishwasher.checked) {
+        if (it.offer.features.indexOf(inputDishwasher.value) === -1) {
+          allChecksComplete = false;
+        }
+      }
+
+      if (inputParking.checked) {
+        if (it.offer.features.indexOf(inputParking.value) === -1) {
+          allChecksComplete = false;
+        }
+      }
+
+      if (inputWasher.checked) {
+        if (it.offer.features.indexOf(inputWasher.value) === -1) {
+          allChecksComplete = false;
+        }
+      }
+
+      if (inputElevator.checked) {
+        if (it.offer.features.indexOf(inputElevator.value) === -1) {
+          allChecksComplete = false;
+        }
+      }
+
+      if (inputConditioner.checked) {
+        if (it.offer.features.indexOf(inputConditioner.value) === -1) {
+          allChecksComplete = false;
+        }
+      }
+
+      return allChecksComplete;
+    });
+
+    window.dataArrayForRender = samePins.slice(0, window.pinsQuantityMax);
+    renderPins(window.dataArrayForRender);
+
+    window.mapPin = window.utils.map.querySelectorAll('button[type=button]');
+    for (var j = 0; j < window.mapPin.length; j++) {
+      window.mapPin[j].addEventListener('click', searchPin);
+    }
+  };
+
+  selectHousingType.addEventListener('change', updatePins);
+  selectHousingPrice.addEventListener('change', updatePins);
+  selectHousingRooms.addEventListener('change', updatePins);
+  selectHousingGuests.addEventListener('change', updatePins);
+  inputWifi.addEventListener('change', window.debounce(updatePins));
+  inputDishwasher.addEventListener('change', window.debounce(updatePins));
+  inputParking.addEventListener('change', window.debounce(updatePins));
+  inputWasher.addEventListener('change', window.debounce(updatePins));
+  inputElevator.addEventListener('change', window.debounce(updatePins));
+  inputConditioner.addEventListener('change', window.debounce(updatePins));
 
   // ПЕРЕТАСКИВАНИЕ МАРКЕРА
   var onMapPinMainMouseDown = function (evt) {
