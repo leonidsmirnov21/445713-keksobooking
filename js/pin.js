@@ -36,11 +36,11 @@
   var searchPin = function (evt) {
     var currentTar = evt.currentTarget;
 
-    for (var i = 0; i < window.dataArrayForRender.length; i++) {
+    window.dataArrayForRender.forEach(function (it, i) {
       if (currentTar === window.mapPin[i]) {
-        window.checkCard(window.dataArrayForRender[i]);
+        window.checkCard(it);
       }
-    }
+    });
   };
 
   var initPins = function (data) {
@@ -83,18 +83,23 @@
   var inputConditioner = mapFilters.querySelector('input#filter-conditioner');
 
   var updatePins = function () {
-    var articleCard = window.utils.map.querySelector('article');
-    if (articleCard) {
-      articleCard.remove();
-    }
+    var removeCard = function () {
+      var articleCard = window.utils.map.querySelector('article');
+      if (articleCard) {
+        articleCard.remove();
+      }
+    };
+    removeCard();
 
-    var mapPin = window.utils.map.querySelectorAll('button[type=button]');
+    var removePins = function () {
+      var mapPin = window.utils.map.querySelectorAll('button[type=button]');
+      Array.from(mapPin).forEach(function (it) {
+        it.remove();
+      });
+    };
+    removePins();
 
-    for (var i = 0; i < mapPin.length; i++) {
-      window.mapPin[i].remove();
-    }
-
-    var samePins = window.dataArray.filter(function (it) {
+    var filterPins = function (it) {
       var allChecksComplete = true;
 
       if (!(selectHousingType.value === 'any' || it.offer.type === selectHousingType.value)) {
@@ -116,44 +121,19 @@
         allChecksComplete = false;
       }
 
-      if (inputWifi.checked) {
-        if (it.offer.features.indexOf(inputWifi.value) === -1) {
-          allChecksComplete = false;
+      var mapCheckboxes = document.querySelectorAll('.map__checkbox');
+      Array.from(mapCheckboxes).forEach(function (checkbox) {
+        if (checkbox.checked) {
+          if (it.offer.features.indexOf(checkbox.value) === -1) {
+            allChecksComplete = false;
+          }
         }
-      }
-
-      if (inputDishwasher.checked) {
-        if (it.offer.features.indexOf(inputDishwasher.value) === -1) {
-          allChecksComplete = false;
-        }
-      }
-
-      if (inputParking.checked) {
-        if (it.offer.features.indexOf(inputParking.value) === -1) {
-          allChecksComplete = false;
-        }
-      }
-
-      if (inputWasher.checked) {
-        if (it.offer.features.indexOf(inputWasher.value) === -1) {
-          allChecksComplete = false;
-        }
-      }
-
-      if (inputElevator.checked) {
-        if (it.offer.features.indexOf(inputElevator.value) === -1) {
-          allChecksComplete = false;
-        }
-      }
-
-      if (inputConditioner.checked) {
-        if (it.offer.features.indexOf(inputConditioner.value) === -1) {
-          allChecksComplete = false;
-        }
-      }
+      });
 
       return allChecksComplete;
-    });
+    };
+
+    var samePins = window.dataArray.filter(filterPins);
 
     window.dataArrayForRender = samePins.slice(0, window.pinsQuantityMax);
     renderPins(window.dataArrayForRender);
