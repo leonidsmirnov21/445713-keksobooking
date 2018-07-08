@@ -36,16 +36,21 @@
   var searchPin = function (evt) {
     var currentTar = evt.currentTarget;
 
-    for (var i = 0; i < window.dataArray.length; i++) {
+    window.dataArrayForRender.forEach(function (it, i) {
       if (currentTar === window.mapPin[i]) {
-        window.checkCard(window.dataArray[i]);
+        window.checkCard(it);
       }
-    }
+    });
   };
 
   var initPins = function (data) {
-    window.dataArray = data.slice(0, 8);
-    renderPins(window.dataArray);
+    window.dataArray = data;
+    window.pinsQuantityMax = 5;
+    var dataArrayShuf = window.utils.arrayShuffle(data);
+    window.dataArrayForRender = dataArrayShuf.slice(0, window.pinsQuantityMax);
+
+    renderPins(window.dataArrayForRender);
+
     window.mapPin = window.utils.map.querySelectorAll('button[type=button]');
 
     for (var i = 0; i < window.mapPin.length; i++) {
@@ -64,6 +69,91 @@
     };
     setTimeout(deleteDiv, 3000);
   };
+
+  var selectHousingType = document.querySelector('select#housing-type');
+  var selectHousingPrice = document.querySelector('select#housing-price');
+  var selectHousingRooms = document.querySelector('select#housing-rooms');
+  var selectHousingGuests = document.querySelector('select#housing-guests');
+  var mapFilters = document.querySelector('.map__filters');
+  var inputWifi = mapFilters.querySelector('input#filter-wifi');
+  var inputDishwasher = mapFilters.querySelector('input#filter-dishwasher');
+  var inputParking = mapFilters.querySelector('input#filter-parking');
+  var inputWasher = mapFilters.querySelector('input#filter-washer');
+  var inputElevator = mapFilters.querySelector('input#filter-elevator');
+  var inputConditioner = mapFilters.querySelector('input#filter-conditioner');
+
+  var updatePins = function () {
+    var removeCard = function () {
+      var articleCard = window.utils.map.querySelector('article');
+      if (articleCard) {
+        articleCard.remove();
+      }
+    };
+    removeCard();
+
+    var removePins = function () {
+      var mapPin = window.utils.map.querySelectorAll('button[type=button]');
+      Array.from(mapPin).forEach(function (it) {
+        it.remove();
+      });
+    };
+    removePins();
+
+    var filterPins = function (it) {
+      var allChecksComplete = true;
+
+      if (!(selectHousingType.value === 'any' || it.offer.type === selectHousingType.value)) {
+        allChecksComplete = false;
+      }
+
+      if (!(selectHousingPrice.value === 'any'
+        || (selectHousingPrice.value === 'low' && it.offer.price < 10000)
+        || (selectHousingPrice.value === 'high' && it.offer.price > 50000)
+        || (selectHousingPrice.value === 'middle' && it.offer.price >= 10000 && it.offer.price <= 50000))) {
+        allChecksComplete = false;
+      }
+
+      if (!(selectHousingRooms.value === 'any' || it.offer.rooms.toString() === selectHousingRooms.value)) {
+        allChecksComplete = false;
+      }
+
+      if (!(selectHousingGuests.value === 'any' || it.offer.guests.toString() === selectHousingGuests.value)) {
+        allChecksComplete = false;
+      }
+
+      var mapCheckboxes = document.querySelectorAll('.map__checkbox');
+      Array.from(mapCheckboxes).forEach(function (checkbox) {
+        if (checkbox.checked) {
+          if (it.offer.features.indexOf(checkbox.value) === -1) {
+            allChecksComplete = false;
+          }
+        }
+      });
+
+      return allChecksComplete;
+    };
+
+    var samePins = window.dataArray.filter(filterPins);
+
+    window.dataArrayForRender = samePins.slice(0, window.pinsQuantityMax);
+    renderPins(window.dataArrayForRender);
+
+    window.mapPin = window.utils.map.querySelectorAll('button[type=button]');
+    for (var j = 0; j < window.mapPin.length; j++) {
+      window.mapPin[j].addEventListener('click', searchPin);
+    }
+  };
+
+  selectHousingType.addEventListener('change', updatePins);
+  selectHousingPrice.addEventListener('change', updatePins);
+  selectHousingRooms.addEventListener('change', updatePins);
+  selectHousingGuests.addEventListener('change', updatePins);
+  inputWifi.addEventListener('change', window.debounce(updatePins));
+  inputDishwasher.addEventListener('change', window.debounce(updatePins));
+  inputParking.addEventListener('change', window.debounce(updatePins));
+  inputWasher.addEventListener('change', window.debounce(updatePins));
+  inputElevator.addEventListener('change', window.debounce(updatePins));
+  inputConditioner.addEventListener('change', window.debounce(updatePins));
 
   // ПЕРЕТАСКИВАНИЕ МАРКЕРА
   var onMapPinMainMouseDown = function (evt) {
