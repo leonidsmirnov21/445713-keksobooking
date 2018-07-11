@@ -26,7 +26,7 @@
             break;
 
           default:
-            error = 'Cтатус ответа: : ' + xhr.status + ' ' + xhr.statusText;
+            error = 'Cтатус ответа: ' + xhr.status + ' ' + xhr.statusText;
         }
 
         if (error) {
@@ -39,8 +39,6 @@
       xhr.addEventListener('timeout', function () {
         onError('Запрос не успел выполниться за ' + xhr.timeout + 'мс');
       });
-
-      // xhr.timeout = 100;
 
       xhr.open('GET', URL_GET);
       xhr.send();
@@ -67,7 +65,7 @@
             break;
 
           default:
-            error = 'Cтатус ответа: : ' + xhr.status + ' ' + xhr.statusText;
+            error = 'Cтатус ответа: ' + xhr.status + ' ' + xhr.statusText;
         }
 
         if (error) {
@@ -81,8 +79,6 @@
       xhr.addEventListener('timeout', function () {
         onError('Запрос не успел выполниться за ' + xhr.timeout + 'мс');
       });
-
-      // xhr.timeout = 100;
 
       xhr.open('POST', URL_POST);
       xhr.send(data);

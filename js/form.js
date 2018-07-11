@@ -1,6 +1,8 @@
 'use strict';
 
 (function () {
+  var MAIN_PIN_START_X = 570;
+  var MAIN_PIN_START_Y = 375;
   var adForm = document.querySelector('.ad-form');
   var fieldsets = adForm.querySelectorAll('fieldset');
   var inputRooms = adForm.querySelector('select#room_number');
@@ -10,11 +12,17 @@
   var inputTimeOut = adForm.querySelector('select#timeout');
 
   var disableForm = function () {
-    for (var i = 0; i < fieldsets.length; i++) {
-      fieldsets[i].setAttribute('disabled', '');
-    }
+    Array.from(fieldsets).forEach(function (it) {
+      it.setAttribute('disabled', '');
+    });
   };
   disableForm();
+
+  window.acivateForm = function () {
+    Array.from(fieldsets).forEach(function (it) {
+      it.removeAttribute('disabled', '');
+    });
+  };
 
   window.utils.getMainPinCoords();
 
@@ -55,6 +63,9 @@
     } else if (inputType.value === 'palace') {
       inpputPrice.min = 10000;
       inpputPrice.placeholder = 10000;
+    } else if (inputType.value === 'bungalo') {
+      inpputPrice.min = 0;
+      inpputPrice.placeholder = 0;
     }
   };
   inputType.addEventListener('change', onInputTypeChange);
@@ -70,17 +81,50 @@
   };
   inputTimeOut.addEventListener('change', onInputTimeOutChange);
 
-  var acivateForm = function () {
-    for (var j = 0; j < fieldsets.length; j++) {
-      fieldsets[j].removeAttribute('disabled', '');
-    }
+  // деактивация страницы
+  var deactivatePage = function () {
+    var mapPinMain = window.utils.map.querySelector('.map__pin--main');
+    var mapFilters = document.querySelector('.map__filters');
+
+    adForm.reset();
+    adForm.classList.add('ad-form--disabled');
+    disableForm();
+    window.utils.map.classList.add('map--faded');
+    window.removeCard();
+    window.removePins();
+    document.querySelector('.map__filters').reset();
+    Array.from(mapFilters.elements).forEach(function (it) {
+      it.setAttribute('disabled', '');
+    });
+    mapPinMain.style.left = MAIN_PIN_START_X + 'px';
+    mapPinMain.style.top = MAIN_PIN_START_Y + 'px';
+    window.utils.getMainPinCoords();
   };
 
-  window.acivateForm = acivateForm;
-
   var initForm = function () {
-    adForm.reset();
-    window.utils.getMainPinCoords();
+    deactivatePage();
+
+    var successBlock = document.querySelector('.success');
+
+    var onPopupEscPress = function (evt) {
+      window.utils.isEscEvent(evt, closePopup);
+    };
+
+    var openPopup = function () {
+      successBlock.classList.remove('hidden');
+      document.addEventListener('keydown', onPopupEscPress);
+    };
+
+    var closePopup = function () {
+      successBlock.classList.add('hidden');
+      document.removeEventListener('keydown', onPopupEscPress);
+    };
+
+    openPopup();
+
+    if (!(successBlock.classList.contains('hidden'))) {
+      successBlock.addEventListener('click', closePopup);
+    }
   };
 
   var initFormError = function (errorMessage) {
@@ -98,5 +142,12 @@
   adForm.addEventListener('submit', function (evt) {
     window.backend.upload(new FormData(adForm), initForm, initFormError);
     evt.preventDefault();
+  });
+
+  var adFormReset = document.querySelector('.ad-form__reset');
+
+  adFormReset.addEventListener('click', function (evt) {
+    evt.preventDefault();
+    deactivatePage();
   });
 })();

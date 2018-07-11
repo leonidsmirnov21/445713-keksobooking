@@ -54,7 +54,20 @@
     card.querySelector('.popup__photos').appendChild(createPhotos(renderObj.offer.photos));
     card.querySelector('.popup__avatar').src = renderObj.author.avatar;
 
+    Array.from(card.children).forEach(function (it) {
+      if (it !== card.querySelector('.popup__avatar') && it.innerHTML === '') {
+        it.classList.add('hidden');
+      }
+    });
+
     return card;
+  };
+
+  window.removeCard = function () {
+    var articleCard = window.utils.map.querySelector('article');
+    if (articleCard) {
+      articleCard.remove();
+    }
   };
 
   // находит элементы для карточки
@@ -65,7 +78,7 @@
     if (!articleCard) {
       window.utils.map.insertBefore(createCard(point), mapFiltersContainer);
     } else {
-      articleCard.remove();
+      window.removeCard();
       window.utils.map.insertBefore(createCard(point), mapFiltersContainer);
     }
   };
@@ -73,9 +86,8 @@
   // вешает обработчик на карту и отлавливает клик по крестику
   var onMapClick = function (evt) {
     var cardClose = window.utils.map.querySelector('.popup__close');
-    var articleCard = window.utils.map.querySelector('article');
     if (evt.target === cardClose) {
-      articleCard.remove();
+      window.removeCard();
     }
   };
   window.utils.map.addEventListener('click', onMapClick);

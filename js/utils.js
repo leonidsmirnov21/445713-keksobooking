@@ -1,12 +1,13 @@
 'use strict';
 
 (function () {
+  var ESC_KEYCODE = 27;
   window.utils = {
     map: document.querySelector('.map'),
-    generateRandIndex: function (min, max) {
-      var rand = min - 0.5 + Math.random() * (max - min + 1);
-      rand = Math.round(rand);
-      return rand;
+    isEscEvent: function (evt, action) {
+      if (evt.keyCode === ESC_KEYCODE) {
+        action();
+      }
     },
     arrayShuffle: function (array) {
       for (var i = array.length - 1; i > 0; i--) {
