@@ -1,6 +1,10 @@
 'use strict';
 
 (function () {
+  var MIN_TOP = 130;
+  var MAX_TOP = 630;
+  var MAP_PIN_WIDTH = 50;
+  var MAP_PIN_HEIGHT = 70;
   var mapPinMain = window.utils.map.querySelector('.map__pin--main');
   var adForm = document.querySelector('.ad-form');
   var pins = document.querySelector('.map__pins');
@@ -10,11 +14,9 @@
 
   var createPin = function (pin) {
     var pinElement = templatePin.cloneNode(true);
-    var mapPinWidth = 50;
-    var mapPinHeight = 70;
 
-    pinElement.style.left = pin.location.x - mapPinWidth / 2 + 'px';
-    pinElement.style.top = pin.location.y - mapPinHeight + 'px';
+    pinElement.style.left = pin.location.x - MAP_PIN_WIDTH / 2 + 'px';
+    pinElement.style.top = pin.location.y - MAP_PIN_HEIGHT + 'px';
     pinElement.querySelector('img').src = pin.author.avatar;
     pinElement.querySelector('img').alt = pin.offer.title;
 
@@ -25,9 +27,10 @@
   var renderPins = function (points) {
     var fragmentPin = document.createDocumentFragment();
 
-    for (var i = 0; i < points.length; i++) {
-      fragmentPin.appendChild(createPin(points[i]));
-    }
+    points.forEach(function (it) {
+      fragmentPin.appendChild(createPin(it));
+    });
+
     pins.appendChild(fragmentPin);
   };
 
@@ -36,21 +39,22 @@
     var currentTar = evt.currentTarget;
 
     window.dataArrayForRender.forEach(function (it, i) {
-      if (currentTar === window.mapPin[i]) {
+      var mapPin = window.utils.map.querySelectorAll('button[type=button]');
+      if (currentTar === mapPin[i]) {
         window.checkCard(it);
       }
     });
 
-    var onPopupEscPress = function (event) {
+    window.onPopupEscPress = function (event) {
       window.utils.isEscEvent(event, closePopup);
     };
 
-    document.addEventListener('keydown', onPopupEscPress);
+    document.addEventListener('keydown', window.onPopupEscPress);
 
     var closePopup = function () {
       var articleCard = window.utils.map.querySelector('article');
       articleCard.remove();
-      document.removeEventListener('keydown', onPopupEscPress);
+      document.removeEventListener('keydown', window.onPopupEscPress);
     };
   };
 
@@ -63,10 +67,11 @@
 
     renderPins(window.dataArrayForRender);
 
-    window.mapPin = window.utils.map.querySelectorAll('button[type=button]');
-    for (var i = 0; i < window.mapPin.length; i++) {
-      window.mapPin[i].addEventListener('click', searchPin);
-    }
+    var mapPin = window.utils.map.querySelectorAll('button[type=button]');
+
+    Array.from(mapPin).forEach(function (it) {
+      it.addEventListener('click', searchPin);
+    });
 
     Array.from(mapFilters.elements).forEach(function (it) {
       it.removeAttribute('disabled', '');
@@ -102,10 +107,10 @@
     window.dataArrayForRender = samePins.slice(0, pinsQuantityMax);
     renderPins(window.dataArrayForRender);
 
-    window.mapPin = window.utils.map.querySelectorAll('button[type=button]');
-    for (var j = 0; j < window.mapPin.length; j++) {
-      window.mapPin[j].addEventListener('click', searchPin);
-    }
+    var mapPin = window.utils.map.querySelectorAll('button[type=button]');
+    Array.from(mapPin).forEach(function (it) {
+      it.addEventListener('click', searchPin);
+    });
   };
 
   // ПЕРЕТАСКИВАНИЕ МАРКЕРА
@@ -116,6 +121,8 @@
     };
 
     var onMapPinMainMove = function (moveEvt) {
+      var mapWidth = window.utils.map.offsetWidth;
+
       var shift = {
         x: startCoords.x - moveEvt.clientX,
         y: startCoords.y - moveEvt.clientY
@@ -126,10 +133,6 @@
         y: moveEvt.y
       };
 
-      var mapWidth = window.utils.map.offsetWidth;
-      var minTop = 130;
-      var maxTop = 630;
-
       mapPinMain.style.top = (mapPinMain.offsetTop - shift.y) + 'px';
       mapPinMain.style.left = (mapPinMain.offsetLeft - shift.x) + 'px';
 
@@ -139,11 +142,11 @@
       if ((mapPinMain.offsetLeft - shift.x) < (mapWidth - mapWidth)) {
         mapPinMain.style.left = (mapWidth - mapWidth) + 'px';
       }
-      if ((mapPinMain.offsetTop - shift.y) < (minTop - mapPinMain.offsetHeight)) {
-        mapPinMain.style.top = (minTop - mapPinMain.offsetHeight) + 'px';
+      if ((mapPinMain.offsetTop - shift.y) < (MIN_TOP - mapPinMain.offsetHeight)) {
+        mapPinMain.style.top = (MIN_TOP - mapPinMain.offsetHeight) + 'px';
       }
-      if ((mapPinMain.offsetTop - shift.y) > maxTop) {
-        mapPinMain.style.top = maxTop + 'px';
+      if ((mapPinMain.offsetTop - shift.y) > MAX_TOP) {
+        mapPinMain.style.top = MAX_TOP + 'px';
       }
     };
 

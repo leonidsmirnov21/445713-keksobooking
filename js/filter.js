@@ -6,12 +6,6 @@
   var selectHousingPrice = document.querySelector('select#housing-price');
   var selectHousingRooms = document.querySelector('select#housing-rooms');
   var selectHousingGuests = document.querySelector('select#housing-guests');
-  var inputWifi = mapFilters.querySelector('input#filter-wifi');
-  var inputDishwasher = mapFilters.querySelector('input#filter-dishwasher');
-  var inputParking = mapFilters.querySelector('input#filter-parking');
-  var inputWasher = mapFilters.querySelector('input#filter-washer');
-  var inputElevator = mapFilters.querySelector('input#filter-elevator');
-  var inputConditioner = mapFilters.querySelector('input#filter-conditioner');
 
   Array.from(mapFilters.elements).forEach(function (it) {
     it.setAttribute('disabled', '');
@@ -51,14 +45,5 @@
     return allChecksComplete;
   };
 
-  selectHousingType.addEventListener('change', window.updatePins);
-  selectHousingPrice.addEventListener('change', window.updatePins);
-  selectHousingRooms.addEventListener('change', window.updatePins);
-  selectHousingGuests.addEventListener('change', window.updatePins);
-  inputWifi.addEventListener('change', window.debounce(window.updatePins));
-  inputDishwasher.addEventListener('change', window.debounce(window.updatePins));
-  inputParking.addEventListener('change', window.debounce(window.updatePins));
-  inputWasher.addEventListener('change', window.debounce(window.updatePins));
-  inputElevator.addEventListener('change', window.debounce(window.updatePins));
-  inputConditioner.addEventListener('change', window.debounce(window.updatePins));
+  mapFilters.addEventListener('change', window.debounce(window.updatePins));
 })();

@@ -16,11 +16,11 @@
     var fragmentFeatures = document.createDocumentFragment();
     var newFeatureElement;
 
-    for (var i = 0; i < arrFeatures.length; i++) {
+    arrFeatures.forEach(function (it) {
       newFeatureElement = document.createElement('li');
-      newFeatureElement.className = 'popup__feature popup__feature--' + arrFeatures[i];
+      newFeatureElement.className = 'popup__feature popup__feature--' + it;
       fragmentFeatures.appendChild(newFeatureElement);
-    }
+    });
     return fragmentFeatures;
   };
 
@@ -29,11 +29,11 @@
     var photosContainer = document.createDocumentFragment();
     var templatePhoto = template.content.querySelector('.popup__photo');
 
-    for (var i = 0; i < arrPhotos.length; i++) {
+    arrPhotos.forEach(function (it) {
       var photoElement = templatePhoto.cloneNode(true);
-      photoElement.src = arrPhotos[i];
+      photoElement.src = it;
       photosContainer.appendChild(photoElement);
-    }
+    });
     return photosContainer;
   };
 
@@ -88,6 +88,7 @@
     var cardClose = window.utils.map.querySelector('.popup__close');
     if (evt.target === cardClose) {
       window.removeCard();
+      document.removeEventListener('keydown', window.onPopupEscPress);
     }
   };
   window.utils.map.addEventListener('click', onMapClick);
