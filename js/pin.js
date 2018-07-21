@@ -11,7 +11,7 @@
   var pins = document.querySelector('.map__pins');
   var template = document.querySelector('template');
   var templatePin = template.content.querySelector('.map__pin');
-  var pinsQuantityMax = 5;
+  var PINS_QUANTITY_MAX = 5;
 
   window.pin = {
     remove: function () {
@@ -26,7 +26,7 @@
 
       var samePins = window.dataArray.filter(window.filterPins);
 
-      window.itemsDataForRender = samePins.slice(0, pinsQuantityMax);
+      window.itemsDataForRender = samePins.slice(0, PINS_QUANTITY_MAX);
       renderPins(window.itemsDataForRender);
 
       var mapPins = window.utils.map.querySelectorAll('button[type=button]');
@@ -87,7 +87,7 @@
   var onInitPins = function (data) {
     window.dataArray = data;
     var itemsDataShuffle = window.utils.arrayShuffle(data);
-    window.itemsDataForRender = itemsDataShuffle.slice(0, pinsQuantityMax);
+    window.itemsDataForRender = itemsDataShuffle.slice(0, PINS_QUANTITY_MAX);
 
     renderPins(window.itemsDataForRender);
 
