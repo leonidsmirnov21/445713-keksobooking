@@ -18,16 +18,19 @@
       }
       return array;
     },
-    getMainPinCoords: function () {
+    getMainPinCoordinates: function () {
       var mapPinMain = window.utils.map.querySelector('.map__pin--main');
-      var inputAdress = document.querySelector('#address');
+      var adress = document.querySelector('#address');
       var mapPinMainLeft = mapPinMain.style.left;
       var mapPinMainTop = mapPinMain.style.top;
       var mapPinMainWidth = mapPinMain.offsetWidth;
       var mapPinMainHeight = mapPinMain.offsetHeight;
-      var inputAdressLeft = +mapPinMainLeft.substr(0, mapPinMainLeft.length - 2) + mapPinMainWidth / 2;
-      var inputAdressTop = +mapPinMainTop.substr(0, mapPinMainTop.length - 2) + mapPinMainHeight;
-      inputAdress.value = Math.floor(inputAdressLeft) + ', ' + Math.floor(inputAdressTop);
+      var adressLeft = +mapPinMainLeft.substr(0, mapPinMainLeft.length - 2) + mapPinMainWidth / 2;
+      var adressTop = +mapPinMainTop.substr(0, mapPinMainTop.length - 2) + mapPinMainHeight;
+      adress.value = Math.floor(adressLeft) + ', ' + Math.floor(adressTop);
+    },
+    deleteDiv: function () {
+      document.querySelector('.error-message').remove();
     }
   };
 })();

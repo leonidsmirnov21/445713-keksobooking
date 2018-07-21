@@ -10,13 +10,13 @@
 
   var template = document.querySelector('template');
   var templateCard = template.content.querySelector('.map__card');
+  var mapFiltersContainer = document.querySelector('.map__filters-container');
 
-  // создаёт список фич
-  var createFeatures = function (arrFeatures) {
+  var createFeatures = function (features) {
     var fragmentFeatures = document.createDocumentFragment();
     var newFeatureElement;
 
-    arrFeatures.forEach(function (it) {
+    features.forEach(function (it) {
       newFeatureElement = document.createElement('li');
       newFeatureElement.className = 'popup__feature popup__feature--' + it;
       fragmentFeatures.appendChild(newFeatureElement);
@@ -24,12 +24,11 @@
     return fragmentFeatures;
   };
 
-  // создаёт список фоток
-  var createPhotos = function (arrPhotos) {
+  var createPhotos = function (photos) {
     var photosContainer = document.createDocumentFragment();
     var templatePhoto = template.content.querySelector('.popup__photo');
 
-    arrPhotos.forEach(function (it) {
+    photos.forEach(function (it) {
       var photoElement = templatePhoto.cloneNode(true);
       photoElement.src = it;
       photosContainer.appendChild(photoElement);
@@ -37,22 +36,21 @@
     return photosContainer;
   };
 
-  // создаёт карточку с данными
-  var createCard = function (renderObj) {
+  var createCard = function (pointRender) {
     var card = templateCard.cloneNode(true);
 
-    card.querySelector('.popup__title').textContent = renderObj.offer.title;
-    card.querySelector('.popup__text--address').textContent = renderObj.offer.address;
-    card.querySelector('.popup__text--price').textContent = renderObj.offer.price + '₽/ночь';
-    card.querySelector('.popup__type').textContent = HOUSE_TYPES[renderObj.offer.type];
-    card.querySelector('.popup__text--capacity').textContent = renderObj.offer.rooms + ' комнаты для ' + renderObj.offer.guests + ' гостей';
-    card.querySelector('.popup__text--time').textContent = 'Заезд после ' + renderObj.offer.checkin + ', выезд до ' + renderObj.offer.checkout;
+    card.querySelector('.popup__title').textContent = pointRender.offer.title;
+    card.querySelector('.popup__text--address').textContent = pointRender.offer.address;
+    card.querySelector('.popup__text--price').textContent = pointRender.offer.price + '₽/ночь';
+    card.querySelector('.popup__type').textContent = HOUSE_TYPES[pointRender.offer.type];
+    card.querySelector('.popup__text--capacity').textContent = pointRender.offer.rooms + ' комнаты для ' + pointRender.offer.guests + ' гостей';
+    card.querySelector('.popup__text--time').textContent = 'Заезд после ' + pointRender.offer.checkin + ', выезд до ' + pointRender.offer.checkout;
     card.querySelector('.popup__features').innerHTML = '';
-    card.querySelector('.popup__features').appendChild(createFeatures(renderObj.offer.features));
-    card.querySelector('.popup__description').textContent = renderObj.offer.description;
+    card.querySelector('.popup__features').appendChild(createFeatures(pointRender.offer.features));
+    card.querySelector('.popup__description').textContent = pointRender.offer.description;
     card.querySelector('.popup__photos').innerHTML = '';
-    card.querySelector('.popup__photos').appendChild(createPhotos(renderObj.offer.photos));
-    card.querySelector('.popup__avatar').src = renderObj.author.avatar;
+    card.querySelector('.popup__photos').appendChild(createPhotos(pointRender.offer.photos));
+    card.querySelector('.popup__avatar').src = pointRender.author.avatar;
 
     Array.from(card.children).forEach(function (it) {
       if (it !== card.querySelector('.popup__avatar') && it.innerHTML === '') {
@@ -63,33 +61,31 @@
     return card;
   };
 
-  window.removeCard = function () {
-    var articleCard = window.utils.map.querySelector('article');
-    if (articleCard) {
-      articleCard.remove();
+  window.card = {
+    remove: function () {
+      var articleCard = window.utils.map.querySelector('article');
+      if (articleCard) {
+        articleCard.remove();
+      }
+    },
+    check: function (point) {
+      var articleCard = window.utils.map.querySelector('article');
+      if (!articleCard) {
+        window.utils.map.insertBefore(createCard(point), mapFiltersContainer);
+      } else {
+        window.card.remove();
+        window.utils.map.insertBefore(createCard(point), mapFiltersContainer);
+        document.removeEventListener('keydown', window.onPopupEscPress);
+      }
     }
   };
 
-  // находит элементы для карточки
-  var mapFiltersContainer = document.querySelector('.map__filters-container');
-
-  window.checkCard = function (point) {
-    var articleCard = window.utils.map.querySelector('article');
-    if (!articleCard) {
-      window.utils.map.insertBefore(createCard(point), mapFiltersContainer);
-    } else {
-      window.removeCard();
-      window.utils.map.insertBefore(createCard(point), mapFiltersContainer);
-    }
-  };
-
-  // вешает обработчик на карту и отлавливает клик по крестику
-  var onMapClick = function (evt) {
+  window.onMapClick = function (evt) {
     var cardClose = window.utils.map.querySelector('.popup__close');
     if (evt.target === cardClose) {
-      window.removeCard();
+      window.card.remove();
+      window.utils.map.removeEventListener('click', window.onMapClick);
       document.removeEventListener('keydown', window.onPopupEscPress);
     }
   };
-  window.utils.map.addEventListener('click', onMapClick);
 })();

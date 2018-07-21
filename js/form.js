@@ -3,6 +3,11 @@
 (function () {
   var MAIN_PIN_START_X = 570;
   var MAIN_PIN_START_Y = 375;
+  var FREE_PRICE = 0;
+  var SMALL_PRICE = 10000;
+  var MIDDLE_PRICE = 50000;
+  var BIG_PRICE = 100000;
+  var DELAY_TIME = 3000;
   var adForm = document.querySelector('.ad-form');
   var fieldsets = adForm.querySelectorAll('fieldset');
   var inputRooms = adForm.querySelector('select#room_number');
@@ -10,6 +15,15 @@
   var inputType = adForm.querySelector('select#type');
   var inputTimeIn = adForm.querySelector('select#timein');
   var inputTimeOut = adForm.querySelector('select#timeout');
+  var adFormReset = document.querySelector('.ad-form__reset');
+
+  window.form = {
+    acivate: function () {
+      Array.from(fieldsets).forEach(function (it) {
+        it.removeAttribute('disabled', '');
+      });
+    }
+  };
 
   var disableForm = function () {
     Array.from(fieldsets).forEach(function (it) {
@@ -18,15 +32,8 @@
   };
   disableForm();
 
-  window.acivateForm = function () {
-    Array.from(fieldsets).forEach(function (it) {
-      it.removeAttribute('disabled', '');
-    });
-  };
+  window.utils.getMainPinCoordinates();
 
-  window.utils.getMainPinCoords();
-
-  // проверка полей комнат и гостей при изменении поля с гостями
   var onInputGuestsChange = function () {
     if (inputRooms.value === '100' && inputGuests.value !== '0') {
       inputGuests.setCustomValidity('Кол-во гостей не может быть больше кол-ва комнат. Только "100 комнат" для "не для гостей"');
@@ -38,7 +45,6 @@
   };
   inputGuests.addEventListener('change', onInputGuestsChange);
 
-  // проверка полей комнат и гостей при изменении поля с комнатами
   var onInputRoomsChange = function () {
     if (inputRooms.value === '100' && inputGuests.value !== '0') {
       inputGuests.setCustomValidity('Кол-во гостей не может быть больше кол-ва комнат. Только "100 комнат" для "не для гостей"');
@@ -50,27 +56,25 @@
   };
   inputRooms.addEventListener('change', onInputRoomsChange);
 
-  // установка минимальных цен в зависимости от типа дома
   var onInputTypeChange = function () {
     var inpputPrice = adForm.querySelector('input#price');
 
     if (inputType.value === 'flat') {
-      inpputPrice.min = 1000;
-      inpputPrice.placeholder = 1000;
+      inpputPrice.min = SMALL_PRICE;
+      inpputPrice.placeholder = SMALL_PRICE;
     } else if (inputType.value === 'house') {
-      inpputPrice.min = 5000;
-      inpputPrice.placeholder = 5000;
+      inpputPrice.min = MIDDLE_PRICE;
+      inpputPrice.placeholder = MIDDLE_PRICE;
     } else if (inputType.value === 'palace') {
-      inpputPrice.min = 10000;
-      inpputPrice.placeholder = 10000;
+      inpputPrice.min = BIG_PRICE;
+      inpputPrice.placeholder = BIG_PRICE;
     } else if (inputType.value === 'bungalo') {
-      inpputPrice.min = 0;
-      inpputPrice.placeholder = 0;
+      inpputPrice.min = FREE_PRICE;
+      inpputPrice.placeholder = FREE_PRICE;
     }
   };
   inputType.addEventListener('change', onInputTypeChange);
 
-  // синхронизация времени заезда и выезда
   var onInputTimeInChange = function () {
     inputTimeOut.value = inputTimeIn.value;
   };
@@ -81,27 +85,33 @@
   };
   inputTimeOut.addEventListener('change', onInputTimeOutChange);
 
-  // деактивация страницы
   var deactivatePage = function () {
     var mapPinMain = window.utils.map.querySelector('.map__pin--main');
     var mapFilters = document.querySelector('.map__filters');
+    var previewImg = document.querySelector('.ad-form-header__preview-img');
+    var photosContainer = document.querySelector('.ad-form__photo');
 
     adForm.reset();
     adForm.classList.add('ad-form--disabled');
     disableForm();
     window.utils.map.classList.add('map--faded');
-    window.removeCard();
-    window.removePins();
+    window.card.remove();
+    window.pin.remove();
     document.querySelector('.map__filters').reset();
     Array.from(mapFilters.elements).forEach(function (it) {
       it.setAttribute('disabled', '');
     });
     mapPinMain.style.left = MAIN_PIN_START_X + 'px';
     mapPinMain.style.top = MAIN_PIN_START_Y + 'px';
-    window.utils.getMainPinCoords();
+    window.utils.getMainPinCoordinates();
+    previewImg.src = 'img/muffin-grey.svg';
+    Array.from(photosContainer.children).forEach(function (it) {
+      it.remove();
+    });
+    mapFilters.removeEventListener('change', window.debounce(window.pin.onMapFiltersChange));
   };
 
-  var initForm = function () {
+  var onInitForm = function () {
     deactivatePage();
 
     var successBlock = document.querySelector('.success');
@@ -127,27 +137,24 @@
     }
   };
 
-  var initFormError = function (errorMessage) {
+  var onInitFormError = function (errorMessage) {
     var node = document.createElement('div');
     node.classList.add('error-message');
     node.textContent = errorMessage;
     document.body.insertAdjacentElement('afterbegin', node);
 
-    var deleteDiv = function () {
-      document.querySelector('.error-message').remove();
-    };
-    setTimeout(deleteDiv, 3000);
+    setTimeout(window.utils.deleteDiv, DELAY_TIME);
   };
 
-  adForm.addEventListener('submit', function (evt) {
-    window.backend.upload(new FormData(adForm), initForm, initFormError);
+  var onAdFormSubmit = function (evt) {
+    window.backend.upload(new FormData(adForm), onInitForm, onInitFormError);
     evt.preventDefault();
-  });
+  };
+  adForm.addEventListener('submit', onAdFormSubmit);
 
-  var adFormReset = document.querySelector('.ad-form__reset');
-
-  adFormReset.addEventListener('click', function (evt) {
+  var onAdFormResetClick = function (evt) {
     evt.preventDefault();
     deactivatePage();
-  });
+  };
+  adFormReset.addEventListener('click', onAdFormResetClick);
 })();

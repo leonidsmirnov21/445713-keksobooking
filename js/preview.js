@@ -3,8 +3,8 @@
 (function () {
   var FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
   var fileChooserMain = document.querySelector('.ad-form-header__input');
-  var previewImg = document.querySelector('.ad-form-header__preview-img');
-  var fileChooserAps = document.querySelector('.ad-form__input');
+  var previewImage = document.querySelector('.ad-form-header__preview-img');
+  var fileChooserApartments = document.querySelector('.ad-form__input');
   var photosContainer = document.querySelector('.ad-form__photo');
 
   fileChooserMain.addEventListener('change', function () {
@@ -19,17 +19,17 @@
       var reader = new FileReader();
 
       reader.addEventListener('load', function () {
-        previewImg.src = reader.result;
+        previewImage.src = reader.result;
       });
 
       reader.readAsDataURL(file);
     }
   });
 
-  var onFileChooserApsChange = function () {
-    var filesAps = fileChooserAps.files;
+  var onFileChooserApartmentsChange = function () {
+    var filesApartments = fileChooserApartments.files;
 
-    Array.from(filesAps).forEach(function (item) {
+    Array.from(filesApartments).forEach(function (item) {
       var fileName = item.name.toLowerCase();
 
       var matches = FILE_TYPES.some(function (it) {
@@ -52,5 +52,5 @@
     });
   };
 
-  fileChooserAps.addEventListener('change', onFileChooserApsChange);
+  fileChooserApartments.addEventListener('change', onFileChooserApartmentsChange);
 })();

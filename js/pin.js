@@ -5,12 +5,36 @@
   var MAX_TOP = 630;
   var MAP_PIN_WIDTH = 50;
   var MAP_PIN_HEIGHT = 70;
+  var DELAY_TIME = 3000;
   var mapPinMain = window.utils.map.querySelector('.map__pin--main');
   var adForm = document.querySelector('.ad-form');
   var pins = document.querySelector('.map__pins');
   var template = document.querySelector('template');
   var templatePin = template.content.querySelector('.map__pin');
   var pinsQuantityMax = 5;
+
+  window.pin = {
+    remove: function () {
+      var mapPins = window.utils.map.querySelectorAll('button[type=button]');
+      Array.from(mapPins).forEach(function (it) {
+        it.remove();
+      });
+    },
+    onMapFiltersChange: function () {
+      window.card.remove();
+      window.pin.remove();
+
+      var samePins = window.dataArray.filter(window.filterPins);
+
+      window.itemsDataForRender = samePins.slice(0, pinsQuantityMax);
+      renderPins(window.itemsDataForRender);
+
+      var mapPins = window.utils.map.querySelectorAll('button[type=button]');
+      Array.from(mapPins).forEach(function (it) {
+        it.addEventListener('click', searchPin);
+      });
+    }
+  };
 
   var createPin = function (pin) {
     var pinElement = templatePin.cloneNode(true);
@@ -23,7 +47,6 @@
     return pinElement;
   };
 
-  // рисует пины
   var renderPins = function (points) {
     var fragmentPin = document.createDocumentFragment();
 
@@ -34,16 +57,17 @@
     pins.appendChild(fragmentPin);
   };
 
-  // отслеживает клик по пину
   var searchPin = function (evt) {
-    var currentTar = evt.currentTarget;
+    var currentGoal = evt.currentTarget;
 
-    window.dataArrayForRender.forEach(function (it, i) {
-      var mapPin = window.utils.map.querySelectorAll('button[type=button]');
-      if (currentTar === mapPin[i]) {
-        window.checkCard(it);
+    window.itemsDataForRender.forEach(function (it, i) {
+      var mapPins = window.utils.map.querySelectorAll('button[type=button]');
+      if (currentGoal === mapPins[i]) {
+        window.card.check(it);
       }
     });
+
+    window.utils.map.addEventListener('click', window.onMapClick);
 
     window.onPopupEscPress = function (event) {
       window.utils.isEscEvent(event, closePopup);
@@ -60,62 +84,47 @@
 
   var mapFilters = document.querySelector('.map__filters');
 
-  var initPins = function (data) {
+  var onInitPins = function (data) {
     window.dataArray = data;
-    var dataArrayShuf = window.utils.arrayShuffle(data);
-    window.dataArrayForRender = dataArrayShuf.slice(0, pinsQuantityMax);
+    var itemsDataShuffle = window.utils.arrayShuffle(data);
+    window.itemsDataForRender = itemsDataShuffle.slice(0, pinsQuantityMax);
 
-    renderPins(window.dataArrayForRender);
+    renderPins(window.itemsDataForRender);
 
-    var mapPin = window.utils.map.querySelectorAll('button[type=button]');
+    var mapPins = window.utils.map.querySelectorAll('button[type=button]');
 
-    Array.from(mapPin).forEach(function (it) {
+    Array.from(mapPins).forEach(function (it) {
       it.addEventListener('click', searchPin);
     });
 
     Array.from(mapFilters.elements).forEach(function (it) {
       it.removeAttribute('disabled', '');
     });
+
+    if (window.utils.map.classList.contains('map--faded')) {
+      window.utils.map.classList.remove('map--faded');
+    }
+
+    if (adForm.classList.contains('ad-form--disabled')) {
+      adForm.classList.remove('ad-form--disabled');
+    }
+
+    window.form.acivate();
+
+    mapFilters.addEventListener('change', window.debounce(window.pin.onMapFiltersChange));
   };
 
-  var initPinsError = function (errorMessage) {
+  var onInitPinsError = function (errorMessage) {
     var node = document.createElement('div');
     node.classList.add('error-message');
     node.textContent = errorMessage;
     document.body.insertAdjacentElement('afterbegin', node);
 
-    var deleteDiv = function () {
-      document.querySelector('div').remove();
-    };
-    setTimeout(deleteDiv, 3000);
+    setTimeout(window.utils.deleteDiv, DELAY_TIME);
   };
 
-  window.removePins = function () {
-    var mapPin = window.utils.map.querySelectorAll('button[type=button]');
-    Array.from(mapPin).forEach(function (it) {
-      it.remove();
-    });
-  };
-
-
-  window.updatePins = function () {
-    window.removeCard();
-    window.removePins();
-
-    var samePins = window.dataArray.filter(window.filterPins);
-
-    window.dataArrayForRender = samePins.slice(0, pinsQuantityMax);
-    renderPins(window.dataArrayForRender);
-
-    var mapPin = window.utils.map.querySelectorAll('button[type=button]');
-    Array.from(mapPin).forEach(function (it) {
-      it.addEventListener('click', searchPin);
-    });
-  };
-
-  // ПЕРЕТАСКИВАНИЕ МАРКЕРА
   var onMapPinMainMouseDown = function (evt) {
-    var startCoords = {
+    var startCoordinates = {
       x: evt.clientX,
       y: evt.clientY
     };
@@ -124,11 +133,11 @@
       var mapWidth = window.utils.map.offsetWidth;
 
       var shift = {
-        x: startCoords.x - moveEvt.clientX,
-        y: startCoords.y - moveEvt.clientY
+        x: startCoordinates.x - moveEvt.clientX,
+        y: startCoordinates.y - moveEvt.clientY
       };
 
-      startCoords = {
+      startCoordinates = {
         x: moveEvt.x,
         y: moveEvt.y
       };
@@ -145,32 +154,23 @@
       if ((mapPinMain.offsetTop - shift.y) < (MIN_TOP - mapPinMain.offsetHeight)) {
         mapPinMain.style.top = (MIN_TOP - mapPinMain.offsetHeight) + 'px';
       }
-      if ((mapPinMain.offsetTop - shift.y) > MAX_TOP) {
-        mapPinMain.style.top = MAX_TOP + 'px';
+      if ((mapPinMain.offsetTop - shift.y) > (MAX_TOP - mapPinMain.offsetHeight)) {
+        mapPinMain.style.top = (MAX_TOP - mapPinMain.offsetHeight) + 'px';
       }
     };
 
-    var onMouseUp = function () {
+    var onDocumentMouseUp = function () {
       document.removeEventListener('mousemove', onMapPinMainMove);
-      document.removeEventListener('mouseup', onMouseUp);
-      window.utils.getMainPinCoords();
+      document.removeEventListener('mouseup', onDocumentMouseUp);
+      window.utils.getMainPinCoordinates();
 
-      // удаляет плашку если она есть
       if (window.utils.map.classList.contains('map--faded')) {
-        window.utils.map.classList.remove('map--faded');
-        window.backend.download(initPins, initPinsError);
+        window.backend.download(onInitPins, onInitPinsError);
       }
-      // удаляет плашку с формы
-      if (adForm.classList.contains('ad-form--disabled')) {
-        adForm.classList.remove('ad-form--disabled');
-      }
-
-      // вызов функции активации формы
-      window.acivateForm();
     };
 
     document.addEventListener('mousemove', onMapPinMainMove);
-    document.addEventListener('mouseup', onMouseUp);
+    document.addEventListener('mouseup', onDocumentMouseUp);
   };
   mapPinMain.addEventListener('mousedown', onMapPinMainMouseDown);
 })();

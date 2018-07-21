@@ -1,6 +1,8 @@
 'use strict';
 
 (function () {
+  var SMALL_PRICE = 10000;
+  var MIDDLE_PRICE = 50000;
   var mapFilters = document.querySelector('.map__filters');
   var selectHousingType = document.querySelector('select#housing-type');
   var selectHousingPrice = document.querySelector('select#housing-price');
@@ -19,9 +21,9 @@
     }
 
     if (!(selectHousingPrice.value === 'any'
-      || (selectHousingPrice.value === 'low' && it.offer.price < 10000)
-      || (selectHousingPrice.value === 'high' && it.offer.price > 50000)
-      || (selectHousingPrice.value === 'middle' && it.offer.price >= 10000 && it.offer.price <= 50000))) {
+      || (selectHousingPrice.value === 'low' && it.offer.price < SMALL_PRICE)
+      || (selectHousingPrice.value === 'high' && it.offer.price > MIDDLE_PRICE)
+      || (selectHousingPrice.value === 'middle' && it.offer.price >= SMALL_PRICE && it.offer.price <= MIDDLE_PRICE))) {
       allChecksComplete = false;
     }
 
@@ -44,6 +46,4 @@
 
     return allChecksComplete;
   };
-
-  mapFilters.addEventListener('change', window.debounce(window.updatePins));
 })();
