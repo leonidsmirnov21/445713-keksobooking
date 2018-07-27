@@ -66,6 +66,8 @@
       var articleCard = window.utils.map.querySelector('article');
       if (articleCard) {
         articleCard.remove();
+        document.removeEventListener('keydown', window.card.onPopupEscPress);
+        window.utils.map.removeEventListener('click', window.card.onMapClick);
       }
     },
     check: function (point) {
@@ -75,17 +77,16 @@
       } else {
         window.card.remove();
         window.utils.map.insertBefore(createCard(point), mapFiltersContainer);
-        document.removeEventListener('keydown', window.onPopupEscPress);
       }
-    }
-  };
-
-  window.onMapClick = function (evt) {
-    var cardClose = window.utils.map.querySelector('.popup__close');
-    if (evt.target === cardClose) {
-      window.card.remove();
-      window.utils.map.removeEventListener('click', window.onMapClick);
-      document.removeEventListener('keydown', window.onPopupEscPress);
+    },
+    onMapClick: function (evt) {
+      var cardClose = window.utils.map.querySelector('.popup__close');
+      if (evt.target === cardClose) {
+        window.card.remove();
+      }
+    },
+    onPopupEscPress: function (event) {
+      window.utils.isEscEvent(event, window.card.remove);
     }
   };
 })();

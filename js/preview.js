@@ -3,7 +3,7 @@
 (function () {
   var FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
   var fileChooserMain = document.querySelector('.ad-form-header__input');
-  var previewImage = document.querySelector('.ad-form-header__preview-img');
+  var mainImageForm = document.querySelector('.ad-form-header__preview-img');
   var fileChooserApartments = document.querySelector('.ad-form__input');
   var photosContainer = document.querySelector('.ad-form__photo');
 
@@ -19,7 +19,7 @@
       var reader = new FileReader();
 
       reader.addEventListener('load', function () {
-        previewImage.src = reader.result;
+        mainImageForm.src = reader.result;
       });
 
       reader.readAsDataURL(file);

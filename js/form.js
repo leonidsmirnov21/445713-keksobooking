@@ -4,9 +4,9 @@
   var MAIN_PIN_START_X = 570;
   var MAIN_PIN_START_Y = 375;
   var FREE_PRICE = 0;
-  var SMALL_PRICE = 10000;
-  var MIDDLE_PRICE = 50000;
-  var BIG_PRICE = 100000;
+  var SMALL_PRICE = 1000;
+  var MIDDLE_PRICE = 5000;
+  var BIG_PRICE = 10000;
   var DELAY_TIME = 3000;
   var adForm = document.querySelector('.ad-form');
   var fieldsets = adForm.querySelectorAll('fieldset');
@@ -17,17 +17,9 @@
   var inputTimeOut = adForm.querySelector('select#timeout');
   var adFormReset = document.querySelector('.ad-form__reset');
 
-  window.form = {
-    acivate: function () {
-      Array.from(fieldsets).forEach(function (it) {
-        it.removeAttribute('disabled', '');
-      });
-    }
-  };
-
   var disableForm = function () {
     Array.from(fieldsets).forEach(function (it) {
-      it.setAttribute('disabled', '');
+      it.disabled = true;
     });
   };
   disableForm();
@@ -43,7 +35,6 @@
       inputGuests.setCustomValidity('');
     }
   };
-  inputGuests.addEventListener('change', onInputGuestsChange);
 
   var onInputRoomsChange = function () {
     if (inputRooms.value === '100' && inputGuests.value !== '0') {
@@ -54,7 +45,6 @@
       inputGuests.setCustomValidity('');
     }
   };
-  inputRooms.addEventListener('change', onInputRoomsChange);
 
   var onInputTypeChange = function () {
     var inpputPrice = adForm.querySelector('input#price');
@@ -73,22 +63,29 @@
       inpputPrice.placeholder = FREE_PRICE;
     }
   };
-  inputType.addEventListener('change', onInputTypeChange);
 
   var onInputTimeInChange = function () {
     inputTimeOut.value = inputTimeIn.value;
   };
-  inputTimeIn.addEventListener('change', onInputTimeInChange);
 
   var onInputTimeOutChange = function () {
     inputTimeIn.value = inputTimeOut.value;
   };
-  inputTimeOut.addEventListener('change', onInputTimeOutChange);
 
-  var deactivatePage = function () {
+  var removeListeners = function () {
+    inputGuests.removeEventListener('change', onInputGuestsChange);
+    inputRooms.removeEventListener('change', onInputRoomsChange);
+    inputType.removeEventListener('change', onInputTypeChange);
+    inputTimeIn.removeEventListener('change', onInputTimeInChange);
+    inputTimeOut.removeEventListener('change', onInputTimeOutChange);
+    adForm.removeEventListener('submit', onAdFormSubmit);
+    adFormReset.removeEventListener('click', onAdFormResetClick);
+  };
+
+  var deactivatePage = function (cb) {
     var mapPinMain = window.utils.map.querySelector('.map__pin--main');
     var mapFilters = document.querySelector('.map__filters');
-    var previewImg = document.querySelector('.ad-form-header__preview-img');
+    var mainImageForm = document.querySelector('.ad-form-header__preview-img');
     var photosContainer = document.querySelector('.ad-form__photo');
 
     adForm.reset();
@@ -99,20 +96,22 @@
     window.pin.remove();
     document.querySelector('.map__filters').reset();
     Array.from(mapFilters.elements).forEach(function (it) {
-      it.setAttribute('disabled', '');
+      it.disabled = true;
     });
     mapPinMain.style.left = MAIN_PIN_START_X + 'px';
     mapPinMain.style.top = MAIN_PIN_START_Y + 'px';
     window.utils.getMainPinCoordinates();
-    previewImg.src = 'img/muffin-grey.svg';
+    mainImageForm.src = 'img/muffin-grey.svg';
     Array.from(photosContainer.children).forEach(function (it) {
       it.remove();
     });
-    mapFilters.removeEventListener('change', window.debounce(window.pin.onMapFiltersChange));
+    mapFilters.removeEventListener('change', window.pin.onMapFiltersChange);
+    removeListeners();
+    cb();
   };
 
   var onInitForm = function () {
-    deactivatePage();
+    deactivatePage(onInputTypeChange);
 
     var successBlock = document.querySelector('.success');
 
@@ -128,6 +127,7 @@
     var closePopup = function () {
       successBlock.classList.add('hidden');
       document.removeEventListener('keydown', onPopupEscPress);
+      successBlock.removeEventListener('click', closePopup);
     };
 
     openPopup();
@@ -150,11 +150,28 @@
     window.backend.upload(new FormData(adForm), onInitForm, onInitFormError);
     evt.preventDefault();
   };
-  adForm.addEventListener('submit', onAdFormSubmit);
 
   var onAdFormResetClick = function (evt) {
     evt.preventDefault();
-    deactivatePage();
+    deactivatePage(onInputTypeChange);
   };
-  adFormReset.addEventListener('click', onAdFormResetClick);
+
+  var addListenersForm = function () {
+    inputGuests.addEventListener('change', onInputGuestsChange);
+    inputRooms.addEventListener('change', onInputRoomsChange);
+    inputType.addEventListener('change', onInputTypeChange);
+    inputTimeIn.addEventListener('change', onInputTimeInChange);
+    inputTimeOut.addEventListener('change', onInputTimeOutChange);
+    adForm.addEventListener('submit', onAdFormSubmit);
+    adFormReset.addEventListener('click', onAdFormResetClick);
+  };
+
+  window.form = {
+    acivate: function () {
+      Array.from(fieldsets).forEach(function (it) {
+        it.disabled = false;
+      });
+      addListenersForm();
+    }
+  };
 })();
