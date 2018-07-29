@@ -7,7 +7,6 @@
   var MAP_PIN_HEIGHT = 70;
   var DELAY_TIME = 3000;
   var PINS_QUANTITY_MAX = 5;
-  var NIB_HEIGHT = 12;
   var mapPinMain = window.utils.map.querySelector('.map__pin--main');
   var adForm = document.querySelector('.ad-form');
   var pins = document.querySelector('.map__pins');
@@ -85,12 +84,7 @@
   };
 
   var onInitPinsError = function (errorMessage) {
-    var node = document.createElement('div');
-    node.classList.add('error-message');
-    node.textContent = errorMessage;
-    document.body.insertAdjacentElement('afterbegin', node);
-
-    setTimeout(window.utils.deleteDiv, DELAY_TIME);
+    window.pin.dataError(errorMessage);
   };
 
   var onMapPinMainMouseDown = function (evt) {
@@ -121,11 +115,11 @@
       if ((mapPinMain.offsetLeft - shift.x) < (mapWidth - mapWidth)) {
         mapPinMain.style.left = (mapWidth - mapWidth) + 'px';
       }
-      if ((mapPinMain.offsetTop - shift.y) < (MIN_TOP - (mapPinMain.offsetHeight + NIB_HEIGHT))) {
-        mapPinMain.style.top = (MIN_TOP - (mapPinMain.offsetHeight + NIB_HEIGHT)) + 'px';
+      if ((mapPinMain.offsetTop - shift.y) < (MIN_TOP - (mapPinMain.offsetHeight + window.pin.NIB_HEIGHT))) {
+        mapPinMain.style.top = (MIN_TOP - (mapPinMain.offsetHeight + window.pin.NIB_HEIGHT)) + 'px';
       }
-      if ((mapPinMain.offsetTop - shift.y) > (MAX_TOP - (mapPinMain.offsetHeight + NIB_HEIGHT))) {
-        mapPinMain.style.top = (MAX_TOP - (mapPinMain.offsetHeight + NIB_HEIGHT)) + 'px';
+      if ((mapPinMain.offsetTop - shift.y) > (MAX_TOP - (mapPinMain.offsetHeight + window.pin.NIB_HEIGHT))) {
+        mapPinMain.style.top = (MAX_TOP - (mapPinMain.offsetHeight + window.pin.NIB_HEIGHT)) + 'px';
       }
     };
 
@@ -145,6 +139,7 @@
   mapPinMain.addEventListener('mousedown', onMapPinMainMouseDown);
 
   window.pin = {
+    NIB_HEIGHT: 12,
     remove: function () {
       var mapPins = window.utils.map.querySelectorAll('button[type=button]');
       Array.from(mapPins).forEach(function (it) {
@@ -164,6 +159,14 @@
       Array.from(mapPins).forEach(function (it) {
         it.addEventListener('click', onItClick);
       });
-    })
+    }),
+    dataError: function (errorMessage) {
+      var node = document.createElement('div');
+      node.classList.add('error-message');
+      node.textContent = errorMessage;
+      document.body.insertAdjacentElement('afterbegin', node);
+
+      setTimeout(window.utils.deleteDiv, DELAY_TIME);
+    }
   };
 })();

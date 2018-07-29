@@ -7,7 +7,6 @@
   var SMALL_PRICE = 1000;
   var MIDDLE_PRICE = 5000;
   var BIG_PRICE = 10000;
-  var DELAY_TIME = 3000;
   var adForm = document.querySelector('.ad-form');
   var fieldsets = adForm.querySelectorAll('fieldset');
   var inputRooms = adForm.querySelector('select#room_number');
@@ -116,7 +115,7 @@
     var successBlock = document.querySelector('.success');
 
     var onPopupEscPress = function (evt) {
-      window.utils.isEscEvent(evt, closePopup);
+      window.utils.isEscEvent(evt, onSuccessBlockClick);
     };
 
     var openPopup = function () {
@@ -124,26 +123,21 @@
       document.addEventListener('keydown', onPopupEscPress);
     };
 
-    var closePopup = function () {
+    var onSuccessBlockClick = function () {
       successBlock.classList.add('hidden');
       document.removeEventListener('keydown', onPopupEscPress);
-      successBlock.removeEventListener('click', closePopup);
+      successBlock.removeEventListener('click', onSuccessBlockClick);
     };
 
     openPopup();
 
     if (!(successBlock.classList.contains('hidden'))) {
-      successBlock.addEventListener('click', closePopup);
+      successBlock.addEventListener('click', onSuccessBlockClick);
     }
   };
 
   var onInitFormError = function (errorMessage) {
-    var node = document.createElement('div');
-    node.classList.add('error-message');
-    node.textContent = errorMessage;
-    document.body.insertAdjacentElement('afterbegin', node);
-
-    setTimeout(window.utils.deleteDiv, DELAY_TIME);
+    window.pin.dataError(errorMessage);
   };
 
   var onAdFormSubmit = function (evt) {
